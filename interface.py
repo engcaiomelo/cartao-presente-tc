@@ -2,6 +2,9 @@ import streamlit as st
 from decode import Decode
 import pandas as pd
 import numpy as np
+import sqlite3
+
+
 
 def Valid(df, COD):
     x = df['Codigo']
@@ -26,30 +29,39 @@ def Insert(df, COD, VALOR):
 
 
 #df = pd.DataFrame(columns=['indice','Valor', 'Codigo'])
-df = pd.read_csv('table.csv')
+
 
 
 st.image('tqc.png', use_column_width=True)
-COD = st.text_input(label='Cole o código do QrCode - Cartão Presente', key='COD')
-VALOR = st.radio('Valor dos Cartão Presente', (50, 100, 150, 200, 250, 300), key='VALOR')
+COD = st.text_input(label='Cole o código do QrCode do Cartão Presente', key='COD')
+VALOR = st.radio('Valor do Cartão Presente', (50, 100, 150, 200, 250, 300), key='VALOR')
 if st.button('verificar', key='VERIFICAR'):
     if Decode(COD, VALOR):
+
+        db = sqlite3.connect('TC.sqlite')
+        df = pd.read_sql_query('Select * from CartaoPresente', db)  # pd.read_csv('table.csv')
+
         if Valid(df, COD) == False:
             st.warning('Este Cartão Presente já foi utilizado')
             #st.write(Valid(df, COD))    # apenas para teste
 
         else:
+
             Insert(df, COD, VALOR)
-            df.to_csv('table.csv', index_label=False )
+
+            df.to_sql('CartaoPresente', db, index=False, if_exists='replace')#, index_label=False )
+
+            #data =
+            data_view = st.dataframe(df)
+            db.close()
             st.success('Cartão Presente Validado')
             #st.write(Valid(df, COD))    # apenas para teste
 
 
     else:
-        st.warning('Verifique novamente se o código QrCode e o valor do cartão estão corretos')
+        st.warning('Verifique novamente se o código do QrCode e/ou o valor do cartão estão corretos')
 
 
-data = st.dataframe(df)
 
 
 
