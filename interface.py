@@ -44,10 +44,10 @@ COD = st.text_input(label='Cole o código do QrCode do Cartão Presente', key='C
 VALOR = st.radio('Valor do Cartão Presente', (50, 100, 150, 200, 250, 300), key='VALOR')
 if st.button('verificar', key='VERIFICAR'):
     if Decode(COD, VALOR):
-        df = pd.read_csv('table.csv')
+        #df = pd.read_csv('table.csv')
 
         db = psycopg2.connect(DATABASE_URL, sslmode='require')    #sqlite3.connect('TC.sqlite')
-        df.to_sql('CartaoPresente', db, index=False, if_exists='replace')
+        #df.to_sql('CartaoPresente', db, index=False, if_exists='replace')
         df = pd.read_sql_query('Select * from CartaoPresente', db)  # pd.read_csv('table.csv')
 
         if Valid(df, COD) == False:
