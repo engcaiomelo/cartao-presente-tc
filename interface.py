@@ -5,12 +5,11 @@ import numpy as np
 import sqlite3
 import os
 import psycopg2
+from insertDB import InsertDB
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
 #conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
-
 
 
 def Valid(df, COD):
@@ -45,20 +44,19 @@ VALOR = st.radio('Valor do Cartão Presente', (50, 100, 150, 200, 250, 300), key
 if st.button('verificar', key='VERIFICAR'):
     if Decode(COD, VALOR):
         #df = pd.read_csv('table.csv')
-
         db = psycopg2.connect(DATABASE_URL, sslmode='require')    #sqlite3.connect('TC.sqlite')
         #df.to_sql('CartaoPresente', db, index=False, if_exists='replace')
-        df = pd.read_sql_query('Select * from CartaoPresente', db)  # pd.read_csv('table.csv')
+        df = pd.read_sql_query('Select * from cartaopresente', db)  # pd.read_csv('table.csv')
 
         if Valid(df, COD) == False:
             st.warning('Este Cartão Presente já foi utilizado')
             #st.write(Valid(df, COD))    # apenas para teste
 
         else:
-
             Insert(df, COD, VALOR)
+            InsertDB(db,df, 'cartaopresente')
 
-            df.to_sql('CartaoPresente', db, index=False, if_exists='replace')#, index_label=False )
+            #df.to_sql('CartaoPresente', db, index=False, if_exists='replace')#, index_label=False )
 
             #data =
             data_view = st.dataframe(df)
