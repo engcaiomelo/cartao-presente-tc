@@ -14,7 +14,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 
 
 def Valid(df, COD):
-    x = df['Codigo']
+    x = df['codigo']
     for i in range(len(x)):
         if x[i] == COD:
             return False
